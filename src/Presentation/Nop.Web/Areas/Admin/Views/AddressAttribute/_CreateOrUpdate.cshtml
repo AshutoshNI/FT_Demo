@@ -1,0 +1,38 @@
+﻿@model AddressAttributeModel
+@inject IEventPublisher eventPublisher
+
+<script>
+    $(document).ready(function () {
+        bindBootstrapTabSelectEvent('addressattribute-edit');
+    });
+</script>
+
+<div class="content">
+    @Html.ValidationSummary(false)
+    @Html.HiddenFor(model => model.Id)
+    <div class="form-horizontal">
+        <div id="addressattribute-edit" class="nav-tabs-custom">
+            <ul class="nav nav-tabs">
+                @Html.RenderBootstrapTabHeader("tab-info", @T("Admin.Address.AddressAttributes.Info"), true)
+                @Html.RenderBootstrapTabHeader("tab-values", @T("Admin.Address.AddressAttributes.Values"))
+            </ul>
+            <div class="tab-content">
+                @Html.RenderBootstrapTabContent("tab-info", await Html.PartialAsync("_CreateOrUpdate.Info"), true)
+                @Html.RenderBootstrapTabContent("tab-values", await Html.PartialAsync("_CreateOrUpdate.Values"))
+            </div>
+        </div>
+    </div>
+</div>
+
+@{
+    //custom tabs
+    var eventMessage = new AdminTabStripCreated(this.Html, "addressattribute-edit");
+    eventPublisher.Publish(eventMessage);
+    foreach (var eventBlock in eventMessage.BlocksToRender)
+    {
+        @eventBlock
+    }
+}
+
+@*save selected tab name*@
+<input type="hidden" id="selected-tab-name" name="selected-tab-name" value="@(Html.GetSelectedTabName())">

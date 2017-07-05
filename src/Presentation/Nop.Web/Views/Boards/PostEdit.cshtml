@@ -1,0 +1,9 @@
+﻿@model EditForumPostModel
+@{   
+    Layout = "_ColumnsOne";
+
+    Html.AddTitleParts(T("Forum.PageTitle.PostEdit").Text);
+}
+@await Component.InvokeAsync("Widget", new { widgetZone = "boards_postedit_before", additionalData = Model.Id })
+@await Html.PartialAsync("_CreateUpdatePost", Model)
+@await Component.InvokeAsync("Widget", new { widgetZone = "boards_postedit_after", additionalData = Model.Id })

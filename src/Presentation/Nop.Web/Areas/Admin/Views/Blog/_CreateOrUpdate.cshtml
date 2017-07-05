@@ -1,0 +1,39 @@
+﻿@model BlogPostModel
+@inject IEventPublisher eventPublisher
+
+@Html.ValidationSummary(true)
+@Html.HiddenFor(model => model.Id)
+
+<script>
+    $(document).ready(function() {
+        bindBootstrapTabSelectEvent('blog-post-edit');
+    });
+</script>
+
+<div class="content">
+    <div class="form-horizontal">
+        <div id="blog-post-edit" class="nav-tabs-custom">
+            <ul class="nav nav-tabs">
+                @Html.RenderBootstrapTabHeader("tab-info", @T("Admin.ContentManagement.Blog.BlogPosts.Info"), true)
+                @Html.RenderBootstrapTabHeader("tab-seo", @T("Admin.Common.SEO"))
+            </ul>
+            <div class="tab-content">
+                @Html.RenderBootstrapTabContent("tab-info", await Html.PartialAsync("_CreateOrUpdate.Info", Model), true)
+                @Html.RenderBootstrapTabContent("tab-seo", await Html.PartialAsync("_CreateOrUpdate.SEO", Model))
+            </div>
+        </div>
+    </div>
+</div>
+
+@{
+    //custom tabs
+    var eventMessage = new AdminTabStripCreated(this.Html, "blog-post-edit");
+    eventPublisher.Publish(eventMessage);
+    foreach (var eventBlock in eventMessage.BlocksToRender)
+    {
+        @eventBlock
+    }
+}
+
+@*save selected tab name*@
+<input type="hidden" id="selected-tab-name" name="selected-tab-name" value="@(Html.GetSelectedTabName())">

@@ -1,0 +1,47 @@
+﻿@model GiftCardModel
+@using Nop.Core.Domain.Catalog;
+@using Nop.Services
+@inject IEventPublisher eventPublisher
+
+@Html.ValidationSummary(false)
+@Html.HiddenFor(model => model.Id)
+
+<script>
+    $(document).ready(function() {
+        bindBootstrapTabSelectEvent('giftcard-edit');
+    });
+</script>
+
+<div class="content">
+    <div class="form-horizontal">
+        <div id="giftcard-edit" class="nav-tabs-custom">
+            <ul class="nav nav-tabs">
+                @Html.RenderBootstrapTabHeader("tab-info", @T("Admin.GiftCards.Info"), true)
+                @if (Model.Id > 0)
+                {
+                    @Html.RenderBootstrapTabHeader("tab-history", @T("Admin.GiftCards.History"))
+                }
+            </ul>
+            <div class="tab-content">
+                @Html.RenderBootstrapTabContent("tab-info", await Html.PartialAsync("_CreateOrUpdate.Info", Model), true)
+                @if (Model.Id > 0)
+                {
+                    @Html.RenderBootstrapTabContent("tab-history", await Html.PartialAsync("_CreateOrUpdate.History", Model))
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@{
+    //custom tabs
+    var eventMessage = new AdminTabStripCreated(this.Html, "giftcard-edit");
+    eventPublisher.Publish(eventMessage);
+    foreach (var eventBlock in eventMessage.BlocksToRender)
+    {
+        @eventBlock
+    }
+}
+
+@*save selected tab name*@
+<input type="hidden" id="selected-tab-name" name="selected-tab-name" value="@(Html.GetSelectedTabName())">

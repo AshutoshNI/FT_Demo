@@ -1,0 +1,54 @@
+﻿@model CheckoutAttributeModel
+@inject IEventPublisher eventPublisher
+
+@Html.ValidationSummary(false)
+@Html.HiddenFor(model => model.Id)
+
+<script>
+    $(document).ready(function() {
+        bindBootstrapTabSelectEvent('checkoutattribute-edit');
+    });
+</script>
+
+<div class="content">
+    <div class="form-horizontal">
+        <div class="row">
+            <div class="col-md-12 clearfix">
+                <div class="pull-left">
+                    @await Component.InvokeAsync("SettingMode", new { modeName = "checkoutattribute-advanced-mode" })
+                </div>
+            </div>
+        </div>
+        <div id="checkoutattribute-edit" class="nav-tabs-custom">
+            <ul class="nav nav-tabs">
+                @Html.RenderBootstrapTabHeader("tab-info", @T("Admin.Catalog.Attributes.CheckoutAttributes.Info"), true)
+                @Html.RenderBootstrapTabHeader("tab-values", @T("Admin.Catalog.Attributes.CheckoutAttributes.Values"))
+                @if (Model.ConditionAllowed)
+                {
+                    @Html.RenderBootstrapTabHeader("tab-condition", @T("Admin.Catalog.Attributes.CheckoutAttributes.Condition"))
+                }
+            </ul>
+            <div class="tab-content">
+                @Html.RenderBootstrapTabContent("tab-info", await Html.PartialAsync("_CreateOrUpdate.Info", Model), true)
+                @Html.RenderBootstrapTabContent("tab-values", await Html.PartialAsync("_CreateOrUpdate.Values", Model))
+                @if (Model.ConditionAllowed)
+                {
+                    @Html.RenderBootstrapTabContent("tab-condition", await Html.PartialAsync("_CreateOrUpdate.Condition", Model))
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@{
+    //custom tabs
+    var eventMessage = new AdminTabStripCreated(this.Html, "checkoutattribute-edit");
+    eventPublisher.Publish(eventMessage);
+    foreach (var eventBlock in eventMessage.BlocksToRender)
+    {
+        @eventBlock
+    }
+}
+
+@*save selected tab name*@
+<input type="hidden" id="selected-tab-name" name="selected-tab-name" value="@(Html.GetSelectedTabName())">
