@@ -4,13 +4,13 @@ namespace Nop.Core
     public static class NopVersion
     {
         /// <summary>
-        /// Gets or sets the store version
+        /// Gets or sets the store version New Version DevCR1
         /// </summary>
         public static string CurrentVersion 
         {
             get
             {
-                return "4.00";
+                return "4.01";
             }
         }
     }
